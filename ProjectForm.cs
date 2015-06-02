@@ -1,5 +1,9 @@
 ﻿using System;
-
+//using Microsoft.Office.Core;
+using Microsoft.Office.Interop.Outlook;
+using System.Drawing;
+using System.Windows.Forms;
+using Newtonsoft.Json.Linq; // For JSON parsing. 
 
 namespace EmailToProject
 {
@@ -67,9 +71,9 @@ namespace EmailToProject
             int counter = 0;
             foreach (var project in projects["projects"])
             {
-                projectBottons[counter].Text = (string)project["title"];
-                projectBottons[counter].Tag = (string)project["id"];
-                projectBottons[counter].Visible = true;
+                this.projectButtons[counter].Text = (string)project["title"];
+                this.projectButtons[counter].Tag = (string)project["id"];
+                this.projectButtons[counter].Visible = true;
 
                 // Quit if the array is full. 
                 if (counter >= projectButtons.Length)
@@ -84,6 +88,21 @@ namespace EmailToProject
             {
                 projectButtons[counter].Visible = false;
             }
+        }
+
+        // Attatches an email as a communication to a project. 
+        public void attatchToProject(Object sender, EventArgs e)
+        {
+            Button button = (Button)sender;
+
+            // Get project ID. 
+            // Get email address. 
+            // Get contact name from email.
+            // Get body.
+            // Make put request. (Let rails handle creating a contact, if needed).
+            // Show outcome. 
+
+            button.Text = (string)button.Tag;
         }
     }
 }

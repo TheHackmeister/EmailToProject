@@ -22,7 +22,7 @@ namespace EmailToProject
         private void ThisAddIn_Startup(object sender, System.EventArgs e)
         {
 // Probably get Auth token here. 
-
+            request = new ProjectRequest();
             Application.ItemContextMenuDisplay += ApplicationItemContextMenuDisplay;
         }
 
@@ -63,8 +63,8 @@ namespace EmailToProject
         {
             string entryid = control.Parameter;                                     // the outlook entry id clicked by the user
             var item = (MailItem)this.Application.Session.GetItemFromID(entryid);   // the actual item
-            
 
+            new ProjectForm(item, request);           
             //JObject projects = JObject.Parse(json);
             //projects.co
             //Button b = new Button();

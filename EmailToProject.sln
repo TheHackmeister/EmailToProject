@@ -15,6 +15,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5066B426-16C9-466A-8428-D0715D7AD819}"
 	ProjectSection(SolutionItems) = preProject
 		ProjectForm.cs = ProjectForm.cs
+		ProjectRequest.cs = ProjectRequest.cs
 	EndProjectSection
 EndProject
 Global

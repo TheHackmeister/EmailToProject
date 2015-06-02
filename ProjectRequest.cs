@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Net;
+using System.IO;
 
 namespace EmailToProject
 {
@@ -31,22 +33,6 @@ namespace EmailToProject
             data.Close();
             reader.Close();
             return s;
-        }
-
-
-        // Attatches an email as a communication to a project. 
-        public void attatchToProject(Object sender, EventArgs e)
-        {
-            Button button = (Button)sender;
-
-            // Get project ID. 
-            // Get email address. 
-            // Get contact name from email.
-            // Get body.
-            // Make put request. (Let rails handle creating a contact, if needed).
-            // Show outcome. 
-
-            button.Text = (string)button.Tag;
         }
     }
 }
