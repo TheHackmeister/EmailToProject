@@ -4,7 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using Microsoft.Office.Core;
-using Microsoft.Office.Interop.Outlook;
+//using Microsoft.Office.Interop.Outlook;
+//using Outlook = Microsoft.Office.Interop.Outlook;
+//using Office = Microsoft.Office.Core;
+//using System.Drawing;
+//using System.Windows.Forms;
+//using System.Net;
+//using System.IO;
+//using Newtonsoft.Json.Linq; // For JSON parsing. 
+
 
 namespace EmailToProject
 {
@@ -27,7 +35,7 @@ namespace EmailToProject
         // This triggers whenever a mailitem is rightclicked, and gets a "selection" object passed which contains all selected items
         void ApplicationItemContextMenuDisplay(CommandBar commandBar, Selection selection)
         {
-            var cb = commandBar.Controls.Add(MsoControlType.msoControlButton, missing, missing, missing, true) as CommandBarButton;
+            var cb = commandBar.Controls.Add(Office.MsoControlType.msoControlButton, missing, missing, missing, true) as Office.CommandBarButton;
             if (cb == null) return;
             cb.Visible = true;
             //cb.Picture = ImageConverter.ImageToPictureDisp(Properties.Resources.Desktop.ToBitmap());    // some icon stored in the resources file
@@ -35,7 +43,7 @@ namespace EmailToProject
             cb.Click += new _CommandBarButtonEvents_ClickEventHandler(AsterixHook);                     // link click event
 
             // single MailItem item selection only, NOT 0 based
-            if (selection.Count == 1 && selection[1] is MailItem)
+            if (selection.Count == 1 && selection[1] is Outlook.MailItem)
             {
                 var item = (MailItem)selection[1];                          // retrieve the selected item
                 string subject = item.Subject;
