@@ -1,6 +1,8 @@
 bin/*
 obj/*
-
+packages*/
+*.exe
+!NuGet.exe
 
 # Windows image file caches
 Thumbs.db
