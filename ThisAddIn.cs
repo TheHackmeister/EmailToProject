@@ -8,7 +8,7 @@ using Office = Microsoft.Office.Core;
 
 namespace EmailToProject
 {
-    public partial class ThisAddIn
+    public partial class EmailToProject
     {
         private void ThisAddIn_Startup(object sender, System.EventArgs e)
         {
