@@ -34,7 +34,7 @@ namespace EmailToProject
             page = new Form();
             page.Text = "Add email to project";
             page.Width = 380;
-            page.Height = 155;
+            page.Height = 180;
 
             // Search box
             tb = new TextBox();
@@ -88,7 +88,6 @@ namespace EmailToProject
                 // Quit if the array is full. 
                 if (counter >= projectButtons.Length)
                 {
-                    MessageBox.Show("Break!");
                     break;
                 }
             }
@@ -110,12 +109,6 @@ namespace EmailToProject
             string body = mail.Subject + "\n" + mail.Body;
 
             string status = request.attachEmail(id, email, contact, body);
-            // Get project ID. 
-            // Get email address. 
-            // Get contact name from email.
-            // Get body.
-            // Make put request. (Let rails handle creating a contact, if needed).
-            // Show outcome. 
             page.Hide();
             MessageBox.Show(status);
         }
