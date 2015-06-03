@@ -1,37 +1,35 @@
 ﻿using System;
 using System.Net;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace EmailToProject
 {
     public class ProjectRequest
     {
         private static String pisces_URL = "http://ubuntu.pcr:8080/projects";
-        private WebClient client;
-
-
+       
         // At some point, it would make sense to pass in the username and password here. 
         public ProjectRequest()
         {
-            // I actually don't know if this should stick around or if it's a one and done thing. 
-            client = new WebClient();
-            client.Headers.Add("accept", "application/json");
+
 
         }
 
-        public string searchProjects(string term) {
-            // Sends the request
-            Stream data = client.OpenRead(pisces_URL + "?q=" + term);
-// Gets the results. Is there a thread lock here?
-// Yes :(. 
-            StreamReader reader = new StreamReader(data);
-// Need to check if we errored out here. 
+        public string searchProjects(string term)
+        {
+            WebClient client = new WebClient(); // This object gets cleared after reading. Need to recreate.
+            client.Headers.Add("accept", "application/json");
+            string s = client.DownloadString(pisces_URL + "?q=" + term) + "*"; // I add the star to be able to shorten scintific terms. For other things, it shouldn't have a large impact. 
+            return s;
+        }
 
-            string s = reader.ReadToEnd();
-            
-            // Clean it up. 
-            data.Close();
-            reader.Close();
+
+        public string attachEmail(string projectID, string emailAddress, string contactName, string body)
+        {
+            WebClient client = new WebClient(); // This object gets cleared after reading. Need to recreate.
+            client.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+            string s = client.UploadString(pisces_URL, "id=" + projectID);
             return s;
         }
     }

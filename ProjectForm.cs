@@ -4,6 +4,7 @@ using Microsoft.Office.Interop.Outlook;
 using System.Drawing;
 using System.Windows.Forms;
 using Newtonsoft.Json.Linq; // For JSON parsing. 
+//using System.Threading.Tasks; // For requests. 
 
 namespace EmailToProject
 {
@@ -13,6 +14,7 @@ namespace EmailToProject
         private Button[] projectButtons;
         private Form page;
         private ProjectRequest request;
+        private TextBox tb;
 
         // MessageBox.Show(item.SenderEmailAddress + "\n" + item.Subject + "\n" + item.Body + "\n" + item.ReceivedTime);          // display sender email & subject line
         
@@ -35,7 +37,7 @@ namespace EmailToProject
             page.Height = 155;
 
             // Search box
-            TextBox tb = new TextBox();
+            tb = new TextBox();
             tb.Width = 250;
             page.Controls.Add(tb);
 
@@ -44,6 +46,7 @@ namespace EmailToProject
             search.Text = "Search Projects";
             search.Location = new Point(260, 0);
             search.Width = 100;
+            search.Click += searchProjects;
             page.Controls.Add(search);
 
             // Search results 
@@ -64,6 +67,12 @@ namespace EmailToProject
             updateButtons(json);
         }
 
+        private void searchProjects(Object sender, EventArgs e)
+        {
+            string json = request.searchProjects(tb.Text);
+            updateButtons(json);
+        }
+
         private void updateButtons(string json)
         {
             JObject projects = JObject.Parse(json);
@@ -75,12 +84,13 @@ namespace EmailToProject
                 this.projectButtons[counter].Tag = (string)project["id"];
                 this.projectButtons[counter].Visible = true;
 
+                counter++;
                 // Quit if the array is full. 
                 if (counter >= projectButtons.Length)
                 {
+                    MessageBox.Show("Break!");
                     break;
                 }
-                counter++; 
             }
 
             // Hides any unused buttons. 
@@ -94,15 +104,20 @@ namespace EmailToProject
         public void attatchToProject(Object sender, EventArgs e)
         {
             Button button = (Button)sender;
+            string id = (string)button.Tag;
+            string email = mail.SenderEmailAddress;
+            string contact = mail.SenderName;
+            string body = mail.Subject + "\n" + mail.Body;
 
+            string status = request.attachEmail(id, email, contact, body);
             // Get project ID. 
             // Get email address. 
             // Get contact name from email.
             // Get body.
             // Make put request. (Let rails handle creating a contact, if needed).
             // Show outcome. 
-
-            button.Text = (string)button.Tag;
+            page.Hide();
+            MessageBox.Show(status);
         }
     }
 }
