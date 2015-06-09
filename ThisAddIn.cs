@@ -57,14 +57,7 @@ namespace EmailToProject
             var item = (MailItem)this.Application.Session.GetItemFromID(entryid);   // the actual item
 
             new ProjectForm(item, request);           
-            //JObject projects = JObject.Parse(json);
-            //projects.co
-            //Button b = new Button();
-
-      
         }
-
-
 
         #region VSTO generated code
 
