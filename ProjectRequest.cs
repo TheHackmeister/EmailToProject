@@ -65,9 +65,9 @@ namespace EmailToProject
             // Create our params. 
             NameValueCollection rec = new NameValueCollection();
             rec.Add("communication[project_id]", projectID);
-            rec.Add("communication[notes]", body );
-// Still need to update this.
-            rec.Add("communication[contact_id]", "17"); 
+            rec.Add("communication[notes]", body);
+            rec.Add("contact_email", emailAddress);
+            rec.Add("contact_name", contactName); 
             rec.Add("communication[communication_type_id]", commType); 
             rec.Add("communication[communication_status_id]", status); 
             rec.Add("communication[summary]", "Email"); 

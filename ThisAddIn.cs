@@ -50,7 +50,6 @@ namespace EmailToProject
             }
         }
 
-
         private void AsterixHook(CommandBarButton control, ref bool canceldefault)
         {
             string entryid = control.Parameter;                                     // the outlook entry id clicked by the user

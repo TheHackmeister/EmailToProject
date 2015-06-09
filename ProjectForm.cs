@@ -166,8 +166,8 @@ namespace EmailToProject
             string email = mail.SenderEmailAddress;
             string contact = mail.SenderName;
             string body = mail.Subject + "\n" + mail.Body;
-
-            JToken status = request.attachEmail(id, email, contact, body, commType, (string)cmbox.SelectedValue);
+           
+            JToken status = request.attachEmail(id, email, contact, body, commType, statuses[(string)cmbox.SelectedItem]);
             page.Hide();
 
 
