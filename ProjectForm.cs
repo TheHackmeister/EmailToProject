@@ -19,21 +19,46 @@ namespace EmailToProject
         private ProjectRequest request;
         private TextBox tb;
         private ComboBox cmbox;
+        private Form login;
+        private TextBox userTB;
+        private TextBox passTB;
         private string defaultStatus = "Returned";
+        
 
         public ProjectForm(MailItem mail, ProjectRequest request) {
             this.mail = mail;
             this.request = request;
-            prepForm();
+            if(prepForm() == true) return; // If there is an error, it will be displayed. Stop proccessing. 
             createForm();
-            searchEmail();
+            if(searchEmail() == true) return;
             page.Show();
         }
 
-        public void prepForm()
+        public Boolean prepForm()
         {
-            setupStatuses();
-            setupCommType();
+            //if (setupAuth() == true) return true;
+            if (setupStatuses() == true) return true;
+            if (setupCommType() == true) return true;
+            return false;
+        }
+
+        private Boolean checkRequestError()
+        {
+            string errorMessage = request.getError();
+
+            if (errorMessage == "Invalid credentials")
+            {
+                getAuth();
+                return true;
+            }
+
+            if (errorMessage != "")
+            {
+                MessageBox.Show(errorMessage);
+                return true;
+            }
+
+            return false;
         }
 
         // Creates the form used to search and display projects. 
@@ -84,25 +109,30 @@ namespace EmailToProject
         }
 
         // Makes sure statuses is initilized and not in error. If it is, initilize it. 
-        private void setupStatuses()
+        private Boolean setupStatuses()
         {
             if (statuses == null || statuses.ContainsKey("-1"))
             {
                 statuses = new Dictionary<string, string>();
                 JToken stats = request.getStatuses();
+                if(checkRequestError() == true) return true;
+
                 foreach (var status in stats)
                 {
                     statuses.Add((string)status.SelectToken("text"), (string)status.SelectToken("id"));
                 }
             }
+            return false;
         }
         
         // Makes sure the communication type is able to be set to Email.
-        private void setupCommType()
+        private Boolean setupCommType()
         {
             if (commType == null || commType == "-1")
             {
                 JToken jCommType = request.getCommType();
+                if(checkRequestError() == true) return true;
+
                 foreach (var cType in jCommType) 
                 {
                     if((string)cType.SelectToken("text") == "Email") {
@@ -110,27 +140,87 @@ namespace EmailToProject
                         break;
                     }
                 }
-
-// Error out here?
             }
+            return false;
         }
 
-        private void searchEmail() {
+       
+        private void getAuth()
+        {
+            login = new Form();
+            login.Text = "Login";
+            login.Width = 220;
+            login.Height = 120;
+
+            userTB = new TextBox();
+            userTB.Location = new Point(75,1);
+            userTB.Width = 125;
+            login.Controls.Add(userTB);
+
+            Label userLabel = new Label();
+            userLabel.Text = "Email:";
+            userLabel.Width = 75;
+            userLabel.Location = new Point(1, 3);
+            login.Controls.Add(userLabel);
+
+
+            passTB = new TextBox();
+            passTB.Location = new Point(75, 25);
+            passTB.Width = 125;
+            passTB.UseSystemPasswordChar = true;
+            login.Controls.Add(passTB);
+
+            Label passLabel = new Label();
+            passLabel.Text = "Password:";
+            passLabel.Width = 75;
+            passLabel.Location = new Point(1, 28);
+            login.Controls.Add(passLabel);
+
+            Button loginButton = new Button();
+            loginButton.Text = "Login";
+            loginButton.Location = new Point(150, 50);
+            loginButton.Width = 50;
+            loginButton.Click += saveAuth;
+            login.Controls.Add(loginButton);
+
+            Label messageLabel = new Label();
+            messageLabel.Text = "Please login and try your action again.";
+            messageLabel.Width = 150;
+            messageLabel.Height = 30;
+            messageLabel.Location = new Point(1, 50);
+            login.Controls.Add(messageLabel);
+
+            login.Show();
+        }
+
+        private void saveAuth(Object sender, EventArgs e)
+        {
+            login.Hide();
+            request.getToken(userTB.Text, passTB.Text);
+            checkRequestError();            
+        }
+
+        private Boolean searchEmail() {
             JToken json = request.searchProjects(mail.SenderEmailAddress);
+            if (checkRequestError() == true) return true;
+
             updateButtons(json);
+            return false;
         }
 
         private void enterFromSearch(Object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Return)
             {
-                searchProjects(sender, e);
+                searchProjects(sender, e); 
             }
         }
 
         private void searchProjects(Object sender, EventArgs e)
         {
             JToken json = request.searchProjects(tb.Text);
+            checkRequestError(); // No error checking because it wouldn't go anywhere anyway. 
+
             updateButtons(json);
         }
 
@@ -168,6 +258,8 @@ namespace EmailToProject
             string body = mail.Subject + "\n" + mail.Body;
            
             JToken status = request.attachEmail(id, email, contact, body, commType, statuses[(string)cmbox.SelectedItem]);
+            checkRequestError(); // No error checking because it wouldn't go anywhere anyway. 
+
             page.Hide();
 
 

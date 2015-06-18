@@ -13,14 +13,12 @@ namespace EmailToProject
         private ProjectRequest request;
         private void ThisAddIn_Startup(object sender, System.EventArgs e)
         {
-// Probably get Auth token here. 
             request = new ProjectRequest();
             Application.ItemContextMenuDisplay += ApplicationItemContextMenuDisplay;
         }
 
         private void ThisAddIn_Shutdown(object sender, System.EventArgs e)
         {
-// Give up Auth token here. 
         }
 
         // Outlook menu item
