@@ -84,13 +84,21 @@ namespace EmailToProject
             search.Click += searchProjects;
             page.Controls.Add(search);
 
+            // Logout button
+            Button logout = new Button();
+            logout.Text = "Logout";
+            logout.Location = new Point(260, 115);
+            logout.Width = 100;
+            logout.Click += forgetAuth;
+            page.Controls.Add(logout);
+
             // Status Type
             cmbox = new ComboBox();
             cmbox.DropDownStyle = ComboBoxStyle.DropDownList; // Make it a dropdown. 
             cmbox.Location = new Point(260, 24);
             cmbox.Width = 100;
             cmbox.Items.AddRange(System.Linq.Enumerable.ToArray(statuses.Keys));
-            cmbox.SelectedItem = "Returned"; // I have to take only the names from the dictionary because otherwise I can't select the item I want.
+            cmbox.SelectedItem = defaultStatus; // I have to take only the names from the dictionary because otherwise I can't select the item I want.
             page.Controls.Add(cmbox);
 
 
@@ -113,9 +121,15 @@ namespace EmailToProject
         {
             if (statuses == null || statuses.ContainsKey("-1"))
             {
+                MessageBox.Show("This is a test;");
                 statuses = new Dictionary<string, string>();
                 JToken stats = request.getStatuses();
-                if(checkRequestError() == true) return true;
+                if (checkRequestError() == true)
+                {
+                    statuses = null;
+                    return true;
+                }
+                    
 
                 foreach (var status in stats)
                 {
@@ -131,7 +145,11 @@ namespace EmailToProject
             if (commType == null || commType == "-1")
             {
                 JToken jCommType = request.getCommType();
-                if(checkRequestError() == true) return true;
+                if (checkRequestError() == true)
+                {
+                    commType = null;
+                    return true;
+                }
 
                 foreach (var cType in jCommType) 
                 {
@@ -143,7 +161,12 @@ namespace EmailToProject
             }
             return false;
         }
-
+       
+        private void forgetAuth(Object sender, EventArgs e) {
+            request.forgetAuth();
+            page.Hide();
+            MessageBox.Show("You have been logged out.");
+        }
        
         private void getAuth()
         {

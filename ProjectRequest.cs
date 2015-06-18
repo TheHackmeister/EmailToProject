@@ -139,7 +139,7 @@ namespace EmailToProject
                 loadAuth();
                 if (email == "" || token == "")
                 {
-                    error = "No credentials saved. Please login.";
+                    error = "Invalid credentials"; // "No credentials saved. Please login.";
                     return false;
                 }
                 authStatus = true;
@@ -149,6 +149,11 @@ namespace EmailToProject
             return true;
         }
 
+        public void forgetAuth()
+        {
+            storeAuth("", "");
+            loadAuth();
+        }
 
         public JToken getStatuses()
         {
