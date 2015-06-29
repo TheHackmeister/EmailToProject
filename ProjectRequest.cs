@@ -14,7 +14,7 @@ namespace EmailToProject
 {
     public class ProjectRequest
     {
-        private static String pisces_URL = "http://ubuntu.pcr:8080/";
+        private static String pisces_URL = "http://projects.pcr/";
         private Outlook.StorageItem storage;
         private string email;
         private string token;
@@ -52,7 +52,7 @@ namespace EmailToProject
                 //Outlook.Folder oInbox = Outlook.Application
                 var outlookApp = new Outlook.Application();
 
-                Outlook.StorageItem storage = outlookApp.Session.GetDefaultFolder(
+                storage = outlookApp.Session.GetDefaultFolder(
                     Outlook.OlDefaultFolders.olFolderCalendar).GetStorage(
                     "PiscesProjects",
                     Outlook.OlStorageIdentifierType.olIdentifyByMessageClass);
@@ -74,7 +74,7 @@ namespace EmailToProject
             //Outlook.Folder oInbox = Outlook.Application
             var outlookApp = new Outlook.Application();
 
-            Outlook.StorageItem storage = outlookApp.Session.GetDefaultFolder(
+            storage = outlookApp.Session.GetDefaultFolder(
                 Outlook.OlDefaultFolders.olFolderCalendar).GetStorage(
                 "PiscesProjects",
                 Outlook.OlStorageIdentifierType.olIdentifyByMessageClass);
@@ -180,7 +180,7 @@ namespace EmailToProject
                 
                 JObject tok = JObject.Parse(s);
                 JToken auth = tok["users"];
-                
+                System.Windows.Forms.MessageBox.Show(auth.ToString());
                 if (auth.ToString() == "") return true; // An error!
                 storeAuth(email, auth["token"].ToString());
                 return false;

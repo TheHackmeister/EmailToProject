@@ -121,7 +121,6 @@ namespace EmailToProject
         {
             if (statuses == null || statuses.ContainsKey("-1"))
             {
-                MessageBox.Show("This is a test;");
                 statuses = new Dictionary<string, string>();
                 JToken stats = request.getStatuses();
                 if (checkRequestError() == true)
@@ -205,6 +204,7 @@ namespace EmailToProject
             loginButton.Width = 50;
             loginButton.Click += saveAuth;
             login.Controls.Add(loginButton);
+            login.AcceptButton = loginButton;
 
             Label messageLabel = new Label();
             messageLabel.Text = "Please login and try your action again.";
@@ -218,13 +218,28 @@ namespace EmailToProject
 
         private void saveAuth(Object sender, EventArgs e)
         {
-            login.Hide();
             request.getToken(userTB.Text, passTB.Text);
+            login.Hide();
             checkRequestError();            
         }
 
         private Boolean searchEmail() {
-            JToken json = request.searchProjects(mail.SenderEmailAddress);
+            string emailAddress = "";
+            MAPIFolder folder = mail.Parent;
+
+            if (folder.Name == "Sent" || folder.Name == "Outbox")
+            {
+               // MessageBox.Show("Folder: Sent" + mail.To);
+                emailAddress = mail.To;
+            }
+            else
+            {
+               // MessageBox.Show("Folder: Other" + mail.SenderEmailAddress);
+                emailAddress = mail.SenderEmailAddress;
+            }
+
+
+            JToken json = request.searchProjects(emailAddress);
             if (checkRequestError() == true) return true;
 
             updateButtons(json);
