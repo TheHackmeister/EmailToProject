@@ -18,12 +18,14 @@ namespace EmailToProject
         private Form page;
         private ProjectRequest request;
         private TextBox tb;
+        private TextBox notes;
         private ComboBox cmbox;
         private Form login;
         private TextBox userTB;
         private TextBox passTB;
         private string defaultStatus = "Returned";
-        
+        private string contactEmail;
+        private string contactName;
 
         public ProjectForm(MailItem mail, ProjectRequest request) {
             this.mail = mail;
@@ -68,7 +70,7 @@ namespace EmailToProject
             page = new Form();
             page.Text = "Add email to project";
             page.Width = 380;
-            page.Height = 180;
+            page.Height = 205;
 
             // Search box
             tb = new TextBox();
@@ -84,10 +86,17 @@ namespace EmailToProject
             search.Click += searchProjects;
             page.Controls.Add(search);
 
+            // Subject/Notes field
+            notes = new TextBox();
+            notes.Width = 250;
+            notes.Location = new Point(0, 23);
+            notes.Text = mail.Subject;
+            page.Controls.Add(notes);
+
             // Logout button
             Button logout = new Button();
             logout.Text = "Logout";
-            logout.Location = new Point(260, 115);
+            logout.Location = new Point(260, 140);
             logout.Width = 100;
             logout.Click += forgetAuth;
             page.Controls.Add(logout);
@@ -108,7 +117,7 @@ namespace EmailToProject
             {
                 Button button = new Button();
                 button.Width = 250;
-                button.Location = new Point(0, (i + 1) * 23);
+                button.Location = new Point(0, (i + 2) * 23);
                 button.Click += attatchToProject;
                 button.Visible = false;
                 page.Controls.Add(button);
@@ -230,16 +239,18 @@ namespace EmailToProject
             if (folder.Name == "Sent" || folder.Name == "Outbox")
             {
                // MessageBox.Show("Folder: Sent" + mail.To);
-                emailAddress = mail.To;
+                contactEmail = mail.To.Replace("\'", "");
+                contactName = contactEmail;
             }
             else
             {
                // MessageBox.Show("Folder: Other" + mail.SenderEmailAddress);
-                emailAddress = mail.SenderEmailAddress;
+                contactEmail = mail.SenderEmailAddress;
+                contactName = mail.SenderName;
             }
 
 
-            JToken json = request.searchProjects(emailAddress);
+            JToken json = request.searchProjects(contactEmail);
             if (checkRequestError() == true) return true;
 
             updateButtons(json);
@@ -291,11 +302,10 @@ namespace EmailToProject
         {
             Button button = (Button)sender;
             string id = (string)button.Tag;
-            string email = mail.SenderEmailAddress;
-            string contact = mail.SenderName;
-            string body = mail.Subject + "\n" + mail.Body;
+            string firstLine = mail.Subject == notes.Text ? mail.Subject : notes.Text + "\n" + mail.Subject;
+            string body = firstLine + "\n" + mail.Body;
            
-            JToken status = request.attachEmail(id, email, contact, body, commType, statuses[(string)cmbox.SelectedItem]);
+            JToken status = request.attachEmail(id, contactEmail, contactName, body, commType, statuses[(string)cmbox.SelectedItem]);
             checkRequestError(); // No error checking because it wouldn't go anywhere anyway. 
 
             page.Hide();
