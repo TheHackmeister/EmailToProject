@@ -14,6 +14,7 @@ namespace EmailToProject
 {
     public class ProjectRequest
     {
+        //private static String pisces_URL = "http://ubuntu.pcr:8080/";
         private static String pisces_URL = "http://projects.pcr/";
         private Outlook.StorageItem storage;
         private string email;
@@ -180,7 +181,6 @@ namespace EmailToProject
                 
                 JObject tok = JObject.Parse(s);
                 JToken auth = tok["users"];
-                System.Windows.Forms.MessageBox.Show(auth.ToString());
                 if (auth.ToString() == "") return true; // An error!
                 storeAuth(email, auth["token"].ToString());
                 return false;
@@ -192,7 +192,7 @@ namespace EmailToProject
             }
         }
 
-        public JToken attachEmail(string projectID, string emailAddress, string contactName, string body, string commType, string status)
+        public JToken attachEmail(string projectID, string emailAddress, string contactName, string body, string commType, string status, string date)
         {
             // Setup the request.
             WebClient client = setupClient();
@@ -208,6 +208,7 @@ namespace EmailToProject
             rec.Add("communication[communication_type_id]", commType); 
             rec.Add("communication[communication_status_id]", status); 
             rec.Add("communication[summary]", "Email");
+            rec.Add("communication[comm_date]", date);
             rec.Add("email", getEmail());
             rec.Add("token", getToken());
 

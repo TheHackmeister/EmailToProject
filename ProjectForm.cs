@@ -233,7 +233,6 @@ namespace EmailToProject
         }
 
         private Boolean searchEmail() {
-            string emailAddress = "";
             MAPIFolder folder = mail.Parent;
 
             if (folder.Name == "Sent" || folder.Name == "Outbox")
@@ -305,7 +304,7 @@ namespace EmailToProject
             string firstLine = mail.Subject == notes.Text ? mail.Subject : notes.Text + "\n" + mail.Subject;
             string body = firstLine + "\n" + mail.Body;
            
-            JToken status = request.attachEmail(id, contactEmail, contactName, body, commType, statuses[(string)cmbox.SelectedItem]);
+            JToken status = request.attachEmail(id, contactEmail, contactName, body, commType, statuses[(string)cmbox.SelectedItem], mail.ReceivedTime.ToString());
             checkRequestError(); // No error checking because it wouldn't go anywhere anyway. 
 
             page.Hide();
